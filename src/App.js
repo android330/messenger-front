@@ -1,24 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import Login from "./Components/Login";
+import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
+import ChatRoom from "./Components/ChatRoom";
+import { useEffect, useState } from "react";
+import { apiAuthUser, apiLoginUser } from "./Services/AuthService";
+import Loading from "./Components/Loading";
+
 
 function App() {
+  let [loggedUser, setLoggedUser] = useState("loading");
+
+  useEffect(()=>{
+    console.log(localStorage.getItem("jwt"))
+    apiAuthUser(localStorage.getItem("jwt")).then((r)=>{
+      console.log(r)
+      setLoggedUser(r)
+    }).catch((r)=>{
+      console.log(r)
+      setLoggedUser(false);
+    })
+  },[])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        {loggedUser == "Loading" && <Route path="*" element={<Loading/>}/>}
+        <Route path='/login' element={<Login setLoggedUser={setLoggedUser}/>}/>
+        {loggedUser && <Route path='/' element={<ChatRoom/>}/>}
+        {/* Insert Other Routes Here */}
+        <Route path="*" element={<Navigate to="/login"/>}/>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
