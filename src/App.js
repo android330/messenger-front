@@ -4,18 +4,20 @@ import ChatRoom from "./Components/ChatRoom";
 import { useEffect, useState } from "react";
 import { apiAuthUser, apiLoginUser } from "./Services/AuthService";
 import Loading from "./Components/Loading";
+import Register from "./Components/Register";
 
 
 function App() {
   let [loggedUser, setLoggedUser] = useState("loading");
 
   useEffect(()=>{
-    console.log(localStorage.getItem("jwt"))
-    apiAuthUser(localStorage.getItem("jwt")).then((r)=>{
-      console.log(r)
+    let jwt = localStorage.getItem("jwt");
+    if(!jwt) return;
+    apiAuthUser(jwt).then((r)=>{
+      // console.log(r)
       setLoggedUser(r)
     }).catch((r)=>{
-      console.log(r)
+      // console.log(r)
       setLoggedUser(false);
     })
   },[])
@@ -23,7 +25,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {loggedUser == "Loading" && <Route path="*" element={<Loading/>}/>}
+        <Route path='register' element={<Register/>}/>
+        {loggedUser == "Loading" && <Route path="*" element={<Loading setLoggedUser={setLoggedUser}/>}/>}
         <Route path='/login' element={<Login setLoggedUser={setLoggedUser}/>}/>
         {loggedUser && <Route path='/' element={<ChatRoom/>}/>}
         {/* Insert Other Routes Here */}

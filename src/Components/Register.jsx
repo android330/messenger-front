@@ -4,7 +4,7 @@ import {  useNavigate } from "react-router-dom";
 import { apiLoginUser } from "../Services/AuthService";
 
 
-export default function Login({setLoggedUser}){
+export default function Register({setLoggedUser}){
   const navigate = useNavigate();
 
   const [username, setUsername] = useState();
@@ -43,13 +43,13 @@ export default function Login({setLoggedUser}){
           <form onSubmit={onSubmit}>
             <Paper elevation={3} sx={{p: '30px'}}>
               <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1, flexDirection: 'column' }}>
-                <Typography gutterBottom variant="h2" >Login</Typography>
+                <Typography gutterBottom variant="h2" >Register</Typography>
                 <TextField id="username-field" label="Username" onChange={(e)=>{setUsername(e.target.value)}} variant="outlined" sx={{mb: 2.5}} error={error} autoFocus/>
                 <TextField id="password-field" label="Password" onChange={(e)=>{setPassword(e.target.value)}} variant="outlined" sx={{m: 0}} error={error} helperText={error ? "Invalid Credentials" : " "} type="password"/>
               </Box>
               <Box sx={{ display: 'flex', pl: 1, pb: 1, flexDirection: 'row', justifyContent: 'center' }}>
                 <Button size="medium"  sx={{mr:1, mt: 1}} variant="contained" type="submit">Login</Button>
-                <Button size="medium" sx={{ml:1, mt:1}} variant="outlined" onClick={(e)=>{navigate('/register')}}>Register</Button>
+                <Button size="medium" sx={{ml:1, mt:1}} variant="outlined" onClick={(e)=>{navigate('/login')}}>Cancel</Button>
               </Box>
             </Paper>
           </form>
@@ -59,11 +59,11 @@ export default function Login({setLoggedUser}){
       <>
        <form onSubmit={onSubmit}>
           <Grid container spacing={0} direction="column"alignItems="center" justifyContent="center" style={{ minHeight: '100vh'}}>
-            <Typography variant="h2" gutterBottom>Login</Typography>
+            <Typography variant="h2" gutterBottom>Register</Typography>
             <TextField id="username-field" label="Username" onChange={(e)=>{setUsername(e.target.value)}} variant="outlined" fullWidth sx={{mb: 2.5}} error={error} autoFocus/>
             <TextField id="password-field" label="Password" onChange={(e)=>{setPassword(e.target.value)}} variant="outlined" fullWidth sx={{mb: 0}} error={error} helperText={error ? "Invalid Credentials" : " "} type="password"/>
             <Button size="large"  variant="contained" sx={{mb: 2}} type="submit" fullWidth>Login</Button>
-            <Button size="large" variant="outlined" onClick={(e)=>{navigate('/register')}} fullWidth>Register</Button>
+            <Button size="large" variant="outlined" onClick={(e)=>{navigate('/login')}} fullWidth>Cancel</Button>
           </Grid>
         </form>
       </>     

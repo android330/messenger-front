@@ -11,3 +11,6 @@ export async function apiAuthUser(){
     return response;
 }
  
+export async function apiRegisterUser(){
+    // TODO: Do
+}

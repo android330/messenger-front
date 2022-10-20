@@ -5,16 +5,21 @@ import React, { useEffect, useRef, useState } from "react";
 import { apiGetAllUsers } from "../Services/UsersService";
 import { apiCreatePost, apiGetAllPosts } from "../Services/PostService";
 import Post from "./Post";
+import MenuIcon from '@mui/icons-material/Menu';
+import Navbar from "./Navbar";
 
 export default function ChatRoom() {
   const token = localStorage.getItem("jwt");
+  const mobileApp = window.innerWidth < 500;
 
   let [users, setUsers] = useState(); // user list on side
   let [messages, setMessages] = useState([]); //list of posts
   let [currentMessage, setCurrentMessage] = useState(''); //current message in box
-  let [error, setError] = useState();
+  let [error, setError] = useState(); // error message
   let [listening, setListening] = useState(false); // currently listening to chat variable
   let [retrievedData, setRetrievedData] = useState(); // state variable for data retrieved from emitter
+  let [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 500); // if sidebar is open
+  let [touchCordinates, setTouchCordinates] = useState([null, null]);
 
   const handleFileUpload = (fileList) =>{
     apiUploadFile(fileList[0], (e)=>{
@@ -78,9 +83,15 @@ export default function ChatRoom() {
 
   return(
     <>
+    {/* TODO: Add navbar */} {/** TODO: add ability to hide drawer in navbar */}
+    
       <Drawer sx={{ width: '240px', flexShrink: 0,'& .MuiDrawer-paper': {width: '240px', boxSizing: 'border-box',}, }} 
-        variant="persistent" anchor="right" open={true}>
-
+        variant="persistent" anchor="right" open={sidebarOpen}
+        onTouchStart={(e)=>{setTouchCordinates([e.touches[0].clientX , e.touches[0].clientY])}}
+        onTouchMove={e=>{e.touches[0].clientX - touchCordinates[0] > 100 && setSidebarOpen(false)}}>
+        {/* <IconButton>
+          <MenuIcon/>
+        </IconButton> */}
         <Typography variant="h4" textAlign={"center"}>Users</Typography>
         {users && users.map((user, index)=>{
             return(
@@ -93,20 +104,21 @@ export default function ChatRoom() {
             )
         })}
       </Drawer>
-      <Box height={'100vh'} paddingRight={"240px"} >
-        <Box paddingBottom={"35px"} >
+      
+      <Box height={'100vh'} paddingRight={sidebarOpen && !mobileApp ? "240px" : "0px"} 
+        onTouchStart={(e)=>{setTouchCordinates([e.touches[0].clientX , e.touches[0].clientY])}}
+        onTouchMove={e=>{touchCordinates[0] - e.touches[0].clientX > 100 && setSidebarOpen(true)}}>
+        <Box paddingBottom={"45px"}>
           <List> 
             {messages && messages.map((message, index)=>{
               return(
-                <ListItem key={index}>
-                  <Post message={message}/>
-                </ListItem>
+                <Post message={message} key={index}/>
               )
             })}
           </List>
         </Box>
         <AlwaysScrollToBottom/>
-        <Paper sx={{background: 'white',position: 'fixed', bottom: 0, left: 0, right: 0, marginRight: '240px', height: '55px'}}>
+        <Paper sx={{background: 'white',position: 'fixed', paddingRight: sidebarOpen ? "240px" : "0px", bottom: 0, left: 0, right: 0, height: '55px'}}>
           <Grid container direction={"row"}>
             <Grid item xs={1} alignSelf="center">
               <IconButton component="label">
@@ -124,6 +136,8 @@ export default function ChatRoom() {
         </Paper> 
       </Box>
       <Snackbar open={Boolean(error)} autoHideDuration={4000} onClose={()=>{setError(false)}} message={error} anchorOrigin={{horizontal: 'center',vertical: 'top'}}/>
+    
+    <Navbar/>
     </>
   )
 }
